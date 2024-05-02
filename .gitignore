@@ -73,3 +73,10 @@ crashlytics-build.properties
 UserSettings/Layouts/
 
 UserSettings/
+
+# Odin
+Assets/Plugins/Sirenix/*
+!Assets/Plugins/Sirenix/Assemblies
+!Assets/Plugins/Sirenix/Assemblies.meta
+Assets/Plugins/Sirenix/Assemblies/*
+!Assets/Plugins/Sirenix/Assemblies/Sirenix.OdinInspector.Attributes*
