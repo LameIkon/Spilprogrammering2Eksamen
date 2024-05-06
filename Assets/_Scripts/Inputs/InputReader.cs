@@ -1,28 +1,58 @@
 using System;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 [CreateAssetMenu(fileName = "InputReader", menuName = "InputReader")]
-public sealed class InputReader : ScriptableObject, PlayerControls.IGameplayActions
+public sealed class InputReader : ScriptableObject
 {
 
-    private PlayerControls _playerControls;
-
-    private void OnEnable() 
-    {
-        if (_playerControls == null) 
-        {
-            _playerControls = new PlayerControls();
-
-            _playerControls.Gameplay.SetCallbacks(this);
-        }
-    }
+    [SerializeField] private KeyCode _up = KeyCode.W;
+    [SerializeField] private KeyCode _down = KeyCode.S;
+    [SerializeField] private KeyCode _left = KeyCode.A;
+    [SerializeField] private KeyCode _right = KeyCode.D;
 
 
     public event Action<Vector2> _OnMoveEvent;
 
-    public void OnMove(InputAction.CallbackContext context)
+    public Vector2 Move()
     {
-        _OnMoveEvent?.Invoke(context.ReadValue<Vector2>());
+        Vector2 dir;
+
+        if (Input.GetKey(_left) && Input.GetKey(_right))
+        {
+            dir.x = 0;
+        }
+        else if (Input.GetKey(_right))
+        {
+            dir.x = 1;
+        }
+        else if (Input.GetKey(_left))
+        {
+            dir.x = -1;
+        }
+        else 
+        {
+            dir.x = 0;
+        }
+
+        if (Input.GetKey(_up) && Input.GetKey(_down))
+        {
+            dir.y = 0;
+        }
+        else if (Input.GetKey(_up))
+        {
+            dir.y = 1;
+        }
+        else if (Input.GetKey(_down))
+        {
+            dir.y = -1;
+        }
+        else 
+        {
+            dir.y = 0;
+        }
+
+
+        return dir;
     }
+
 }
