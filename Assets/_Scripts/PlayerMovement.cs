@@ -10,8 +10,10 @@ public class PlayerMovement : NetworkBehaviour
     public InputReader _inputReader;
     private Rigidbody _rb;
 
+
     public int speed = 60;
     private Vector2 _direction;
+
 
     private void Awake() 
     {

@@ -11,7 +11,7 @@ public class FileWriteDataStore : IDataStore
     
     public FileWriteDataStore(ISerialize serializer) // As all the fields are readonly they need to be assiged in a consturctor
     {
-        _dataPath = Application.persistentDataPath; // the place we want to store the data.
+        _dataPath = Application.persistentDataPath; // the place we want to store the data, this will be in the AppData folder.
         _fileExtension = ".json"; // we are storing it as a .json file, but this could become more generic 
         _serializer = serializer; // The ISerialize we will passing 
     }
@@ -23,26 +23,33 @@ public class FileWriteDataStore : IDataStore
 
     public void Save(GameData data)
     {
-        string fileLocation = GetFilePath(data._Name);  // We get the file location
-
-        if (!File.Exists(fileLocation)) 
-        {
-            throw new IOException("File not found!"); // We check if there is a file in the location
-        }
-
+        string fileLocation = GetFilePath(data._FileName);  // We get the file location
+        
         File.WriteAllText(fileLocation, _serializer.Serialize(data)); // we pass the file to the serializer so it can handle that implementation
-
     }
 
-    public GameData Load(string name)
+    public GameData Load(string fileName)
     {
-        string fileLocation = GetFilePath(name); // We get the file location
+        string fileLocation = GetFilePath(fileName); // We get the file location
 
         if (!File.Exists(fileLocation)) 
         {
-            throw new IOException("File not found!"); // Checking that it exists
+            throw new IOException($"{fileName} does not exist in folder"); // Checking that it exists in the location
         } 
 
         return _serializer.Deserialize<GameData>(File.ReadAllText(fileLocation)); // we pass the file to the serializer
     }
+
+    public void DeleteSave(string fileName) 
+    {
+        string fileLocation = GetFilePath(fileName);
+
+        if (File.Exists(fileLocation)) 
+        {
+            File.Delete(fileLocation);
+        }
+
+
+    }
+
 }
