@@ -25,7 +25,7 @@ public class SpawnFactory : MonoBehaviour
 
     public void SpawnRandomItem(Vector3 spawnPos)
     {
-        ItemType randomType = (ItemType)Random.Range(0, 1);
-        GameObject spawnedItem = CreateItem(randomType, spawnPos);
+       // ItemType randomType = (ItemType)Random.Range(0, 1);
+        GameObject spawnedItem = CreateItem(ItemType.Coin, spawnPos);
     }
 }
