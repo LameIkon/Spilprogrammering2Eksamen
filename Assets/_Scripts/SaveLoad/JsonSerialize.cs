@@ -1,7 +1,7 @@
 using UnityEngine;
 
 // This is the concrete implementation of how to serialize .json files.
-public class JsonSerialize : ISerialize 
+public class JsonSerialize : ISerialize // It implements the ISerialize interface therefore we know it needs to have a way of serializing and deserializing
 {
     public string Serialize<T>(T obj)
     {

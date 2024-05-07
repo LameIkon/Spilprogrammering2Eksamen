@@ -12,7 +12,7 @@ public class FileWriteDataStore : IDataStore
     public FileWriteDataStore(ISerialize serializer) // As all the fields are readonly they need to be assiged in a consturctor
     {
         _dataPath = Application.persistentDataPath; // the place we want to store the data, this will be in the AppData folder.
-        _fileExtension = ".json"; // we are storing it as a .json file, but this could become more generic 
+        _fileExtension = ".json"; // we are storing it as a .json file, but this could become more generic, then it would be assigned in the constructor
         _serializer = serializer; // The ISerialize we will passing 
     }
 
@@ -48,8 +48,5 @@ public class FileWriteDataStore : IDataStore
         {
             File.Delete(fileLocation);
         }
-
-
     }
-
 }
