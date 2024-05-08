@@ -22,6 +22,7 @@ public class ItemFactory : MonoBehaviour
         if (collision.CompareTag("Player"))
         {
             //Setup for value on item being applied to a score
+            SpawnFactory._objectsSpawned--;
             Destroy(gameObject);
         }
     }
