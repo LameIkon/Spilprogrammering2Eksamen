@@ -2,9 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Mono.Data.Sqlite;
-using Unity.VisualScripting;
-using UnityEngine.SocialPlatforms.Impl;
-using Unity.VisualScripting.Dependencies.Sqlite;
 using System.Data;
 using TMPro;
 
@@ -36,7 +33,7 @@ public class DataBaseDataStore : IDataStore
             using (SqliteCommand createCommand = sqlConnection.CreateCommand())
             {
                 createCommand.CommandText = "CREATE TABLE IF NOT EXISTS Leaderboard (playerName VARCHAR(30), score INT)";
-                createCommand.ExecuteNonQuery(); // Send to the DB
+                createCommand.ExecuteNonQuery(); // Run the SQL code
             }            
             sqlConnection.Close();
 
@@ -65,7 +62,7 @@ public class DataBaseDataStore : IDataStore
                 insertCommand.CommandText = "INSERT INTO Leaderboard (playerName, score) VALUES (@PlayerName, @Score)";
                 insertCommand.Parameters.AddWithValue("@PlayerName", playerName);
                 insertCommand.Parameters.AddWithValue("@Score", score);
-                insertCommand.ExecuteNonQuery();
+                insertCommand.ExecuteNonQuery(); // Run the SQL code
             }
             sqlConnection.Close();
 
@@ -86,15 +83,17 @@ public class DataBaseDataStore : IDataStore
             {
                 // Use the select command to find the player on the leaderboard
                 command.CommandText = "SELECT playerName, score FROM Leaderboard WHERE playerName = @PlayerName";
-                command.Parameters.AddWithValue("@PlayerName", playerName);
+                command.Parameters.AddWithValue("@PlayerName", playerName); // PlayerName from the scriptable object should be enough to find the wanted player
 
-                using (IDataReader reader = command.ExecuteReader())
+                using (IDataReader reader = command.ExecuteReader()) // Run the SELECT command 
                 {
                     // Update the provided GameData object with the loaded data
-                    playerName = reader.GetString(0);
-                    score = reader.GetInt32(1);                    
+                    playerName = reader.GetString(0); // Get the first value = name
+                    score = reader.GetInt32(1); // Get the second value = score                     
                 }
                 sqlConnection.Close();
+
+                // We need to set the data back to the scriptable object....
             }
         }
     }
@@ -114,8 +113,8 @@ public class DataBaseDataStore : IDataStore
             {
                 // Call the command to delete records of that player
                 command.CommandText = "DELETE FROM Leaderboard WHERE playerName = @FileName";
-                command.Parameters.AddWithValue("@FileName", fileName);
-                command.ExecuteNonQuery();
+                command.Parameters.AddWithValue("@FileName", fileName); // by getting the name of the player from the file we should be able to find the currect player and delete it
+                command.ExecuteNonQuery(); // Run SQL code
             }
             sqlConnection.Close();
         }
@@ -130,8 +129,8 @@ public class DataBaseDataStore : IDataStore
             using (SqliteCommand command = sqlConnection.CreateCommand())
             {
                 // Call the command to drop the table
-                command.CommandText = "DROP TABLE IF EXISTS Leaderboard";
-                command.ExecuteNonQuery();
+                command.CommandText = "DROP TABLE IF EXISTS Leaderboard"; // Nuke the table if it exist
+                command.ExecuteNonQuery(); // Run SQL code
             }
             sqlConnection.Close();
         }
@@ -152,10 +151,10 @@ public class DataBaseDataStore : IDataStore
                 {
                     string leaderboardTextContent = ""; // ensure the string is empty
 
-                    while (reader.Read())
+                    while (reader.Read()) // reads from row to row in the table
                     {
                         // Get the player name and score for the text and put to next line
-                        leaderboardTextContent += "Name: " + reader["playerName"] + " Score: " + reader["Score"] + "\n";
+                        leaderboardTextContent += "Name: " + reader["playerName"] + " Score: " + reader["Score"] + "\n"; // Makes a readable leaderboard to be seen ingame
                     }
 
                     // the table assigns all text to the text component
