@@ -6,6 +6,7 @@ using Unity.VisualScripting;
 using UnityEngine.SocialPlatforms.Impl;
 using Unity.VisualScripting.Dependencies.Sqlite;
 using System.Data;
+using TMPro;
 
 public class DataBaseDataStore : IDataStore
 {
@@ -13,6 +14,7 @@ public class DataBaseDataStore : IDataStore
     private readonly ISerialize _serializer;
     private readonly string _filePath;
     private readonly string _fileExtention;
+    [SerializeField] private TextMeshProUGUI _leaderboarText;
 
     //private string _dataBase = "URI=file:databaseTest.db";
 
@@ -25,15 +27,10 @@ public class DataBaseDataStore : IDataStore
 
     public void InitDB(GameData data) 
     {
+        // This should be called when the the player get loaded
         using (SqliteConnection sqlConnection = new SqliteConnection(Application.persistentDataPath)) 
         {
             sqlConnection.Open(); // Open connection to the database
-
-            // Retrieve all values from the scripable object here
-            string playerName = null; //data.playernameData;
-            int score = 0;//data.score;
-            
-
 
             // Create table
             using (SqliteCommand createCommand = sqlConnection.CreateCommand())
@@ -70,11 +67,77 @@ public class DataBaseDataStore : IDataStore
                 insertCommand.Parameters.AddWithValue("@Score", score);
                 insertCommand.ExecuteNonQuery();
             }
+            sqlConnection.Close();
 
         }
     }
 
-    public void ShowRecords()
+    public void Load(GameData data)
+    {
+        using (SqliteConnection sqlConnection = new SqliteConnection(Application.persistentDataPath))
+        {
+            // Retrieve all values from the scripable object here -- needs to be changed
+            string playerName = null; //data.playernameData;
+            int score = 0;//data.score;
+
+            sqlConnection.Open();
+
+            using (SqliteCommand command = sqlConnection.CreateCommand())
+            {
+                // Use the select command to find the player on the leaderboard
+                command.CommandText = "SELECT playerName, score FROM Leaderboard WHERE playerName = @PlayerName";
+                command.Parameters.AddWithValue("@PlayerName", playerName);
+
+                using (IDataReader reader = command.ExecuteReader())
+                {
+                    // Update the provided GameData object with the loaded data
+                    playerName = reader.GetString(0);
+                    score = reader.GetInt32(1);                    
+                }
+                sqlConnection.Close();
+            }
+        }
+    }
+
+    public GameData Load(string name)
+    {
+        throw new System.NotImplementedException();       
+    }
+
+    public void DeleteSave(string fileName)
+    {
+        using (SqliteConnection sqlConnection = new SqliteConnection(Application.persistentDataPath))
+        {
+            sqlConnection.Open();
+
+            using (SqliteCommand command = sqlConnection.CreateCommand())
+            {
+                // Call the command to delete records of that player
+                command.CommandText = "DELETE FROM Leaderboard WHERE playerName = @FileName";
+                command.Parameters.AddWithValue("@FileName", fileName);
+                command.ExecuteNonQuery();
+            }
+            sqlConnection.Close();
+        }
+    }
+
+    public void DeleteAllSaves()
+    {
+        using (SqliteConnection sqlConnection = new SqliteConnection(Application.persistentDataPath))
+        {
+            sqlConnection.Open();
+
+            using (SqliteCommand command = sqlConnection.CreateCommand())
+            {
+                // Call the command to drop the table
+                command.CommandText = "DROP TABLE IF EXISTS Leaderboard";
+                command.ExecuteNonQuery();
+            }
+            sqlConnection.Close();
+        }
+    }
+
+    public void ShowLeaderboard()
     {
         using (SqliteConnection sqlConnection = new SqliteConnection(Application.persistentDataPath))
         {
@@ -87,28 +150,19 @@ public class DataBaseDataStore : IDataStore
                 // Read all values from the database
                 using (IDataReader reader = command.ExecuteReader())
                 {
+                    string leaderboardTextContent = ""; // ensure the string is empty
+
                     while (reader.Read())
                     {
-                        // Print values from database
-                        Debug.Log("Name: " + reader["playerName"] + " Score: " + reader["Score"]);
+                        // Get the player name and score for the text and put to next line
+                        leaderboardTextContent += "Name: " + reader["playerName"] + " Score: " + reader["Score"] + "\n";
                     }
+
+                    // the table assigns all text to the text component
+                    _leaderboarText.text = leaderboardTextContent;
                 }
             }
+            sqlConnection.Close();
         }
-    }
-
-    public GameData Load(string name)
-    {
-        throw new System.NotImplementedException();       
-    }
-
-    public void DeleteSave(string fileName)
-    {
-        throw new System.NotImplementedException();
-    }
-
-    public void DeleteAllSaves()
-    {
-        throw new System.NotImplementedException();
     }
 }
