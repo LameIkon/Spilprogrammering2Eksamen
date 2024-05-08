@@ -24,6 +24,7 @@ public class ItemFactory : MonoBehaviour
             //Setup for value on item being applied to a score
             SpawnFactory._objectsSpawned--;
             Destroy(gameObject);
+            
         }
     }
 
