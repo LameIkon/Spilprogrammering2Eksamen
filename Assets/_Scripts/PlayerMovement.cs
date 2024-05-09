@@ -52,6 +52,7 @@ public class PlayerMovement : NetworkBehaviour
         if (isLocalPlayer)
         {
             _playerScoreUI.DisplayPlayerScore(newPlayerScore);
+            _dataBase.UpdateScore(_Name, playerScore);
         }
     }
 
@@ -60,7 +61,7 @@ public class PlayerMovement : NetworkBehaviour
     {
         playerScore += change;
         CommandChangeScore(change);
-        DataBaseDataStore._Instance.UpdateScore(_Name, playerScore);
+        
         //_saveLoadManager.SaveGame(); // wrote out since it caused bugs
     }
 
