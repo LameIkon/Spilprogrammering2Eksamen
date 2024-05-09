@@ -6,7 +6,7 @@ using System.Data;
 using TMPro;
 using Mirror;
 
-public class DataBaseDataStore : NetworkBehaviour 
+public class DataBaseDataStore : MonoBehaviour 
 {
     //[SerializeField] private TextMeshProUGUI _leaderboarText;
 
@@ -112,7 +112,6 @@ public class DataBaseDataStore : NetworkBehaviour
 
     public void UpdateScore(string name, int score)
     {
-        test.SetActive(true);
         using (SqliteConnection sqlConnection = new SqliteConnection(_dataBase))
         {
             sqlConnection.Open();

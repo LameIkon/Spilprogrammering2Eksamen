@@ -19,6 +19,8 @@ public class PlayerMovement : NetworkBehaviour
 
     [SyncVar(hook = nameof(DisplayPlayerScore))]
     public int playerScore = 0;
+
+    [SyncVar]
     public string _Name = "";
 
     //public SaveLoadManager _saveLoadManager;
@@ -58,7 +60,7 @@ public class PlayerMovement : NetworkBehaviour
     {
         playerScore += change;
         CommandChangeScore(change);
-        //DataBaseDataStore._Instance.UpdateScore(_Name, playerScore);
+        DataBaseDataStore._Instance.UpdateScore(_Name, playerScore);
         //_saveLoadManager.SaveGame(); // wrote out since it caused bugs
     }
 
