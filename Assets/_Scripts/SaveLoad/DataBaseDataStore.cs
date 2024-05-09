@@ -113,9 +113,9 @@ public class DataBaseDataStore : NetworkBehaviour
         }
     }
 
-    public void UpdateScore(int score)
+    public void UpdateScore(string name, int score)
     {
-        _Score += score;
+        //_Score += score;
         using (SqliteConnection sqlConnection = new SqliteConnection(_dataBase))
         {
             sqlConnection.Open();
@@ -124,11 +124,9 @@ public class DataBaseDataStore : NetworkBehaviour
             {
                 // Use the select command to find the player on the leaderboard
                 command.CommandText = "UPDATE Leaderboard SET score = @Score WHERE playerName = @PlayerName";
-                command.Parameters.AddWithValue("@Score", _Score);
-                command.Parameters.AddWithValue("@PlayerName", _Name); // PlayerName from the scriptable object should be enough to find the wanted player
+                command.Parameters.AddWithValue("@Score", score);
+                command.Parameters.AddWithValue("@PlayerName", name); // PlayerName from the scriptable object should be enough to find the wanted player
                 command.ExecuteNonQuery();
-                Debug.Log("Update Score");
-                // We need to set the data back to the scriptable object....
             }
             sqlConnection.Close();
         }
@@ -160,7 +158,7 @@ public class DataBaseDataStore : NetworkBehaviour
             using (SqliteCommand command = sqlConnection.CreateCommand())
             {
                 // Call the command to drop the table
-                command.CommandText = "DROP TABLE IF EXISTS Leaderboard"; // Nuke the table if it exist
+                command.CommandText = "DELETE FROM Leaderboard"; // Remove all values
                 command.ExecuteNonQuery(); // Run SQL code
             }
             sqlConnection.Close();

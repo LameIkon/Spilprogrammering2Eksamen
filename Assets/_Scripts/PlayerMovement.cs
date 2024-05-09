@@ -37,9 +37,11 @@ public class PlayerMovement : NetworkBehaviour
 
     private void Start()
     {
-        _Name = PlayerName.GetLocalName();
-
-        DataBaseDataStore._Instance.Save(_Name);
+        if (isLocalPlayer)
+        {
+            _Name = PlayerName.GetLocalName();
+            DataBaseDataStore._Instance.Save(_Name);
+        }
     }
 
     private void DisplayPlayerScore(int oldScore, int newPlayerScore)
@@ -55,7 +57,8 @@ public class PlayerMovement : NetworkBehaviour
     {
         playerScore += change;
         CommandChangeScore(change);
-        _saveLoadManager.SaveGame();
+        DataBaseDataStore._Instance.UpdateScore(_Name, playerScore);
+        //_saveLoadManager.SaveGame(); // wrote out since it caused bugs
     }
 
     [Command(requiresAuthority = false)]
