@@ -30,7 +30,11 @@ public class PlayerMovement : NetworkBehaviour
         _rb = GetComponent<Rigidbody>();
         _playerScoreUI = FindObjectOfType<PlayerScore>();
         _globalScoreUI = FindObjectOfType<GlobalScore>();
-        _Name = DataBaseDataStore._Instance._Name;
+        //_Name = DataBaseDataStore._Instance._Name;
+
+        _Name = PlayerName.GetLocalName();
+        gameObject.name = _Name; // Set the gameobject to the players name
+        Debug.Log(_Name);
 
     }
 

@@ -11,7 +11,7 @@ public class DataBaseDataStore : NetworkBehaviour
     [SerializeField] private TextMeshProUGUI _leaderboarText;
 
 
-    private string _dataBase = "URI=file:databaseTest.db";
+    private string _dataBase = "URI=file:database.db";
 
     public string _Name;
     public int _Score = 0;
@@ -35,16 +35,14 @@ public class DataBaseDataStore : NetworkBehaviour
                 Destroy(gameObject);
             }
         }
+
+        InitDB();
     }
 
 
 
-    public void InitDB(string playerName) 
+    public void InitDB() 
     {
-        _Name = playerName;
-
-        //this._Name = playerName;
-        // This should be called when the the player get loaded
         using (SqliteConnection sqlConnection = new SqliteConnection(_dataBase)) 
         {
             sqlConnection.Open(); // Open connection to the database
@@ -66,16 +64,13 @@ public class DataBaseDataStore : NetworkBehaviour
         
         using (SqliteConnection sqlConnection = new SqliteConnection(_dataBase))
         {
-            // Retrieve all values from the scripable object here -- needs to be changed 
-            //int score = 0;//data.score;
-
             sqlConnection.Open(); // Open connection to the database
 
             using (SqliteCommand insertCommand = sqlConnection.CreateCommand())
             {
                 // This inspiration from Marco can cause SQL injection -03 karakter til Marco. We need to make it different
                 //string text = "INSERT INTO leaderboard (playerName, score) VALUES ('{0}', '{1}')";
-                //insertCommand.CommandText = string.Format(text, playerName, score);
+                //insertCommand.CommandText = string.Format(text, _Name, _Score);
                 //insertCommand.ExecuteNonQuery();
 
                 // Now this is what i consider a 12
@@ -123,10 +118,6 @@ public class DataBaseDataStore : NetworkBehaviour
         _Score += score;
         using (SqliteConnection sqlConnection = new SqliteConnection(_dataBase))
         {
-            //// Retrieve all values from the scripable object here -- needs to be changed
-            //string playerName = null; //data.playernameData;
-            //int score = 0;//data.score;
-
             sqlConnection.Open();
 
             using (SqliteCommand command = sqlConnection.CreateCommand())
