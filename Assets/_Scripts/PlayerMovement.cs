@@ -14,6 +14,8 @@ public class PlayerMovement : NetworkBehaviour
     private Vector2 _direction;
     
     private PlayerScore _playerScoreUI;
+    private GlobalScore _globalScoreUI;
+    private EnemyScore _enemyScoreUI;
     
     [SyncVar(hook = nameof(DisplayPlayerScore))]
     public int playerScore = 0;
@@ -23,6 +25,8 @@ public class PlayerMovement : NetworkBehaviour
         _inputReader = ScriptableObject.CreateInstance<InputReader>();
         _rb = GetComponent<Rigidbody>();
         _playerScoreUI = FindObjectOfType<PlayerScore>();
+        _globalScoreUI = FindObjectOfType<GlobalScore>();
+        _enemyScoreUI = FindObjectOfType<EnemyScore>();
     }
 
     private void DisplayPlayerScore(int oldScore, int newPlayerScore)
@@ -32,16 +36,24 @@ public class PlayerMovement : NetworkBehaviour
             _playerScoreUI.DisplayPlayerScore(newPlayerScore);
         }
     }
-
+    
     [Command(requiresAuthority = false)]
     private void CommandSetPlayerScore(int change) => playerScore += change; 
+    
+    [Command(requiresAuthority = false)]
+    private void CommandChangeScore() { CommandSetPlayerScore(+1); _globalScoreUI.globalScoreValue++; }
+    
+    // [Command(requiresAuthority = false)]
+    // private void CommandChangeEnemyScore()
+    // {
+    //     
+    // }
     
     private void OnTriggerEnter(Collider col)
     {
         // Updates the score by 1 everytime a coin is picked up
-        if (col.CompareTag("Coin")) CommandSetPlayerScore(+1); 
+        if (col.CompareTag("Coin")) CommandChangeScore();
     }
-
     
     private void FixedUpdate()
     {
