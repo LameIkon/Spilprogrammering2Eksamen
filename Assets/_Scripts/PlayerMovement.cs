@@ -19,10 +19,11 @@ public class PlayerMovement : NetworkBehaviour
 
     [SyncVar(hook = nameof(DisplayPlayerScore))]
     public int playerScore = 0;
-    public string _Name;
+    public string _Name = "";
 
-    public SaveLoadManager _saveLoadManager;
+    //public SaveLoadManager _saveLoadManager;
     private GameData _gameData;
+    private DataBaseDataStore _dataBase;
 
     private void Awake()
     {
@@ -30,17 +31,17 @@ public class PlayerMovement : NetworkBehaviour
         _rb = GetComponent<Rigidbody>();
         _playerScoreUI = FindObjectOfType<PlayerScore>();
         _globalScoreUI = FindObjectOfType<GlobalScore>();
+        _dataBase = FindObjectOfType<DataBaseDataStore>();
         //_Name = DataBaseDataStore._Instance._Name;
-
-
     }
+
 
     private void Start()
     {
         if (isLocalPlayer)
         {
             _Name = PlayerName.GetLocalName();
-            DataBaseDataStore._Instance.Save(_Name);
+            _dataBase.Save(_Name, playerScore); // Insert the players initial data into the table
         }
     }
 
@@ -57,7 +58,7 @@ public class PlayerMovement : NetworkBehaviour
     {
         playerScore += change;
         CommandChangeScore(change);
-        DataBaseDataStore._Instance.UpdateScore(_Name, playerScore);
+        //DataBaseDataStore._Instance.UpdateScore(_Name, playerScore);
         //_saveLoadManager.SaveGame(); // wrote out since it caused bugs
     }
 

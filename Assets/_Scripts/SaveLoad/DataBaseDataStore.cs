@@ -8,10 +8,12 @@ using Mirror;
 
 public class DataBaseDataStore : NetworkBehaviour 
 {
-    [SerializeField] private TextMeshProUGUI _leaderboarText;
+    //[SerializeField] private TextMeshProUGUI _leaderboarText;
 
+    public GameObject test;
 
     private string _dataBase = "URI=file:database.db";
+    //private string _dataBase = "Assets/Database/database.db";
 
     public string _Name;
     public int _Score = 0;
@@ -59,9 +61,8 @@ public class DataBaseDataStore : NetworkBehaviour
     }
 
 
-    public void Save(string name)
+    public void Save(string name, int score)
     {
-        
         using (SqliteConnection sqlConnection = new SqliteConnection(_dataBase))
         {
             sqlConnection.Open(); // Open connection to the database
@@ -76,7 +77,7 @@ public class DataBaseDataStore : NetworkBehaviour
                 // Now this is what i consider a 12
                 insertCommand.CommandText = "INSERT INTO Leaderboard (playerName, score) VALUES (@PlayerName, @Score)";
                 insertCommand.Parameters.AddWithValue("@PlayerName", name);
-                insertCommand.Parameters.AddWithValue("@Score", _Score);
+                insertCommand.Parameters.AddWithValue("@Score", score);
                 insertCommand.ExecuteNonQuery(); // Run the SQL code
             }
             sqlConnection.Close();
@@ -88,10 +89,6 @@ public class DataBaseDataStore : NetworkBehaviour
     {
         using (SqliteConnection sqlConnection = new SqliteConnection(_dataBase))
         {
-            //// Retrieve all values from the scripable object here -- needs to be changed
-            //string playerName = null; //data.playernameData;
-            //int score = 0;//data.score;
-
             sqlConnection.Open();
 
             using (SqliteCommand command = sqlConnection.CreateCommand())
@@ -115,7 +112,7 @@ public class DataBaseDataStore : NetworkBehaviour
 
     public void UpdateScore(string name, int score)
     {
-        //_Score += score;
+        test.SetActive(true);
         using (SqliteConnection sqlConnection = new SqliteConnection(_dataBase))
         {
             sqlConnection.Open();
@@ -187,7 +184,7 @@ public class DataBaseDataStore : NetworkBehaviour
                     }
 
                     // the table assigns all text to the text component
-                    _leaderboarText.text = leaderboardTextContent;
+                    //_leaderboarText.text = leaderboardTextContent;
                 }
             }
             sqlConnection.Close();

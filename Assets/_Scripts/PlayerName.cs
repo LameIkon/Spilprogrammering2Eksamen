@@ -10,6 +10,7 @@ public class PlayerName : MonoBehaviour
     public static void SetName(string name)
     {
         _Name = name;
+        Debug.Log(name);
     }
 
     public static string GetLocalName()
