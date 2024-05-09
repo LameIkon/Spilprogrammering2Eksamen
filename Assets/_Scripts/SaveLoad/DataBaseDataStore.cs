@@ -4,28 +4,48 @@ using UnityEngine;
 using Mono.Data.Sqlite;
 using System.Data;
 using TMPro;
+using Mirror;
 
-public class DataBaseDataStore : IDataStore
+public class DataBaseDataStore : NetworkBehaviour 
 {
-
-    private readonly ISerialize _serializer;
-    private readonly string _filePath;
-    private readonly string _fileExtention;
     [SerializeField] private TextMeshProUGUI _leaderboarText;
 
-    //private string _dataBase = "URI=file:databaseTest.db";
 
-    public DataBaseDataStore(ISerialize serializer) 
+    private string _dataBase = "URI=file:databaseTest.db";
+
+    public string _Name;
+    public int _Score = 0;
+
+    
+    public static DataBaseDataStore _Instance;
+
+    private void Awake() 
     {
-        _filePath = Application.persistentDataPath;
-        _fileExtention = ".db";
-        _serializer = serializer;
+        if (_Instance == null)  // We make this a Singleton
+        {
+            _Instance = this;
+            transform.SetParent(null);      // We set the parent of the this the gameObject that has this component to be its own parent, this will ensure that it will not be destroyed prematurely.
+            DontDestroyOnLoad(gameObject);  // This will persist through scenes, but is not really needed in this instance but it is nice to have
+
+        }
+        else
+        {
+            if (_Instance != this)
+            {
+                Destroy(gameObject);
+            }
+        }
     }
 
-    public void InitDB(GameData data) 
+
+
+    public void InitDB(string playerName) 
     {
+        _Name = playerName;
+
+        //this._Name = playerName;
         // This should be called when the the player get loaded
-        using (SqliteConnection sqlConnection = new SqliteConnection(Application.persistentDataPath)) 
+        using (SqliteConnection sqlConnection = new SqliteConnection(_dataBase)) 
         {
             sqlConnection.Open(); // Open connection to the database
 
@@ -41,13 +61,13 @@ public class DataBaseDataStore : IDataStore
     }
 
 
-    public void Save(GameData data)
+    public void Save()
     {
-        using (SqliteConnection sqlConnection = new SqliteConnection(Application.persistentDataPath)) 
+        
+        using (SqliteConnection sqlConnection = new SqliteConnection(_dataBase))
         {
-            // Retrieve all values from the scripable object here -- needs to be changed
-            string playerName = null; //data.playernameData;
-            int score = 0;//data.score;
+            // Retrieve all values from the scripable object here -- needs to be changed 
+            //int score = 0;//data.score;
 
             sqlConnection.Open(); // Open connection to the database
 
@@ -60,8 +80,8 @@ public class DataBaseDataStore : IDataStore
 
                 // Now this is what i consider a 12
                 insertCommand.CommandText = "INSERT INTO Leaderboard (playerName, score) VALUES (@PlayerName, @Score)";
-                insertCommand.Parameters.AddWithValue("@PlayerName", playerName);
-                insertCommand.Parameters.AddWithValue("@Score", score);
+                insertCommand.Parameters.AddWithValue("@PlayerName", _Name);
+                insertCommand.Parameters.AddWithValue("@Score", _Score);
                 insertCommand.ExecuteNonQuery(); // Run the SQL code
             }
             sqlConnection.Close();
@@ -69,13 +89,13 @@ public class DataBaseDataStore : IDataStore
         }
     }
 
-    public void Load(GameData data)
+    public void Load()
     {
-        using (SqliteConnection sqlConnection = new SqliteConnection(Application.persistentDataPath))
+        using (SqliteConnection sqlConnection = new SqliteConnection(_dataBase))
         {
-            // Retrieve all values from the scripable object here -- needs to be changed
-            string playerName = null; //data.playernameData;
-            int score = 0;//data.score;
+            //// Retrieve all values from the scripable object here -- needs to be changed
+            //string playerName = null; //data.playernameData;
+            //int score = 0;//data.score;
 
             sqlConnection.Open();
 
@@ -83,13 +103,13 @@ public class DataBaseDataStore : IDataStore
             {
                 // Use the select command to find the player on the leaderboard
                 command.CommandText = "SELECT playerName, score FROM Leaderboard WHERE playerName = @PlayerName";
-                command.Parameters.AddWithValue("@PlayerName", playerName); // PlayerName from the scriptable object should be enough to find the wanted player
+                command.Parameters.AddWithValue("@PlayerName", _Name); // PlayerName from the scriptable object should be enough to find the wanted player
 
                 using (IDataReader reader = command.ExecuteReader()) // Run the SELECT command 
                 {
                     // Update the provided GameData object with the loaded data
-                    playerName = reader.GetString(0); // Get the first value = name
-                    score = reader.GetInt32(1); // Get the second value = score                     
+                    _Name = reader.GetString(0); // Get the first value = name
+                    _Score = reader.GetInt32(1); // Get the second value = score                     
                 }
                 sqlConnection.Close();
 
@@ -98,14 +118,34 @@ public class DataBaseDataStore : IDataStore
         }
     }
 
-    public GameData Load(string name)
+    public void UpdateScore(int score)
     {
-        throw new System.NotImplementedException();       
+        _Score += score;
+        using (SqliteConnection sqlConnection = new SqliteConnection(_dataBase))
+        {
+            //// Retrieve all values from the scripable object here -- needs to be changed
+            //string playerName = null; //data.playernameData;
+            //int score = 0;//data.score;
+
+            sqlConnection.Open();
+
+            using (SqliteCommand command = sqlConnection.CreateCommand())
+            {
+                // Use the select command to find the player on the leaderboard
+                command.CommandText = "UPDATE Leaderboard SET score = @Score WHERE playerName = @PlayerName";
+                command.Parameters.AddWithValue("@Score", _Score);
+                command.Parameters.AddWithValue("@PlayerName", _Name); // PlayerName from the scriptable object should be enough to find the wanted player
+                command.ExecuteNonQuery();
+                Debug.Log("Update Score");
+                // We need to set the data back to the scriptable object....
+            }
+            sqlConnection.Close();
+        }
     }
 
     public void DeleteSave(string fileName)
     {
-        using (SqliteConnection sqlConnection = new SqliteConnection(Application.persistentDataPath))
+        using (SqliteConnection sqlConnection = new SqliteConnection(_dataBase))
         {
             sqlConnection.Open();
 
@@ -122,7 +162,7 @@ public class DataBaseDataStore : IDataStore
 
     public void DeleteAllSaves()
     {
-        using (SqliteConnection sqlConnection = new SqliteConnection(Application.persistentDataPath))
+        using (SqliteConnection sqlConnection = new SqliteConnection(_dataBase))
         {
             sqlConnection.Open();
 
@@ -138,7 +178,7 @@ public class DataBaseDataStore : IDataStore
 
     public void ShowLeaderboard()
     {
-        using (SqliteConnection sqlConnection = new SqliteConnection(Application.persistentDataPath))
+        using (SqliteConnection sqlConnection = new SqliteConnection(_dataBase))
         {
             sqlConnection.Open();
 

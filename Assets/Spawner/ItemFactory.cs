@@ -1,17 +1,20 @@
+using Mirror;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ItemFactory : MonoBehaviour
+public class ItemFactory : NetworkBehaviour
 {
     private int _value;
     private string _name;
     private ItemType _itemType;
 
+
     [SerializeField] private ItemObject _item; //This where we determine what item the ItemFactory is going to "produce"
 
+
     private void Awake()
-    {        
+    {
         _value = _item._Value;
         _name = _item._Name;
         _itemType = _item._Type;
@@ -21,10 +24,10 @@ public class ItemFactory : MonoBehaviour
     {
         if (collision.CompareTag("Player"))
         {
+            collision.GetComponent<PlayerMovement>().CommandSetPlayerScore(_value);
             //Setup for value on item being applied to a score
             SpawnFactory._objectsSpawned--;
             Destroy(gameObject);
-            
         }
     }
 
