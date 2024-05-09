@@ -59,7 +59,7 @@ public class DataBaseDataStore : NetworkBehaviour
     }
 
 
-    public void Save()
+    public void Save(string name)
     {
         
         using (SqliteConnection sqlConnection = new SqliteConnection(_dataBase))
@@ -75,7 +75,7 @@ public class DataBaseDataStore : NetworkBehaviour
 
                 // Now this is what i consider a 12
                 insertCommand.CommandText = "INSERT INTO Leaderboard (playerName, score) VALUES (@PlayerName, @Score)";
-                insertCommand.Parameters.AddWithValue("@PlayerName", _Name);
+                insertCommand.Parameters.AddWithValue("@PlayerName", name);
                 insertCommand.Parameters.AddWithValue("@Score", _Score);
                 insertCommand.ExecuteNonQuery(); // Run the SQL code
             }
