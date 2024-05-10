@@ -1,15 +1,19 @@
 using Mirror;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class SpawnFactory : NetworkBehaviour
 {
 
     [SerializeField] private GameObject _coinPrefab;
+    [SerializeField] private GameObject _capsulePrefab;
     [SerializeField] private Collider _spawnCollider;
-    public int _coinTimer;
+    public int _spawnTimer;
     public static int _objectsSpawned;
     public int _maxObjects;
 
@@ -46,7 +50,7 @@ public class SpawnFactory : NetworkBehaviour
 
     private void Spawning()
     {
-        StartCoroutine(SpawningObjects(_coinTimer));    
+        StartCoroutine(SpawningObjects(_spawnTimer));    
     }
 
     public GameObject CreateItem(ItemType type, Vector3 position)
@@ -59,6 +63,9 @@ public class SpawnFactory : NetworkBehaviour
             case ItemType.Coin:
                 spawned = Instantiate(_coinPrefab, position, Quaternion.identity);
                 break;
+            case ItemType.Capsule:
+                spawned = Instantiate(_capsulePrefab, position, Quaternion.identity);
+                break;
         }
 
         return spawned;
@@ -67,8 +74,8 @@ public class SpawnFactory : NetworkBehaviour
 
     public void SpawnRandomItem(Vector3 spawnPos)
     {
-        // ItemType randomType = (ItemType)Random.Range(0, 1);
-        GameObject spawnedItem = CreateItem(ItemType.Coin, spawnPos);
+        ItemType randomType = (ItemType)UnityEngine.Random.Range(0, (float)Enum.GetValues(typeof(ItemType)).Cast<ItemType>().Max() +1);
+        GameObject spawnedItem = CreateItem(randomType, spawnPos);
         //AddItem(spawnedItem);
     }
 
@@ -84,7 +91,7 @@ public class SpawnFactory : NetworkBehaviour
 
         for (_objectsSpawned = 0; _objectsSpawned < _maxObjects; _objectsSpawned++)
         {
-            _randomSpawn = new Vector3(Random.Range(_colliderMin.x, _colliderMax.x), Random.Range(_colliderMin.y, _colliderMax.y), Random.Range(_colliderMin.z, _colliderMax.z));
+            _randomSpawn = new Vector3(UnityEngine.Random.Range(_colliderMin.x, _colliderMax.x), UnityEngine.Random.Range(_colliderMin.y, _colliderMax.y), UnityEngine.Random.Range(_colliderMin.z, _colliderMax.z));
             SpawnRandomItem(_randomSpawn);
             yield return new WaitForSeconds(time);
         }

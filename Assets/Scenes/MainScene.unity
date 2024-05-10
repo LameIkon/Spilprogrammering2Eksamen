@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.4511451, g: 0.49975842, b: 0.56766474, a: 1}
+  m_IndirectSpecularColor: {r: 0.45114553, g: 0.49975944, b: 0.56766605, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1623,8 +1623,9 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   _coinPrefab: {fileID: 8549145469293981079, guid: 0bee7897dafd34147a4092a03a8064df, type: 3}
+  _capsulePrefab: {fileID: 8451708669652777680, guid: 112ca5eadedf29a44be19492b5820508, type: 3}
   _spawnCollider: {fileID: 934740320}
-  _coinTimer: 2
+  _spawnTimer: 2
   _maxObjects: 50
   _objectList: []
 --- !u!4 &1464441364
@@ -1696,11 +1697,11 @@ MonoBehaviour:
   _gameData:
     _FileName: 
     _PlayerData:
+      _Name: 
       _Id: 0
-      _name: 
-      _score: 0
-      _position: {fileID: 0}
-  _Instance: {fileID: 0}
+      _Score: 0
+      _position: {x: 0, y: 0, z: 0}
+      _rotation: {x: 0, y: 0, z: 0, w: 0}
 --- !u!4 &1839061659
 Transform:
   m_ObjectHideFlags: 0
