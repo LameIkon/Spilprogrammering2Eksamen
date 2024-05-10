@@ -11,8 +11,6 @@ public sealed class InputReader : ScriptableObject
     [SerializeField] private KeyCode _right = KeyCode.D;
 
 
-    public event Action<Vector2> _OnMoveEvent;
-
     public Vector2 Move()
     {
         Vector2 dir;

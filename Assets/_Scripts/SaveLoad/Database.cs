@@ -10,8 +10,6 @@ public class Database : MonoBehaviour
 {
     //[SerializeField] private TextMeshProUGUI _leaderboarText;
 
-    public GameObject test;
-
     private string _dataBase = "URI=file:database.db";
     //private string _dataBase = "Assets/Database/database.db";
 
