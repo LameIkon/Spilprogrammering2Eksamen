@@ -76,6 +76,7 @@ public class SpawnFactory : NetworkBehaviour
     {
         ItemType randomType = (ItemType)UnityEngine.Random.Range(0, (float)Enum.GetValues(typeof(ItemType)).Cast<ItemType>().Max() +1);
         GameObject spawnedItem = CreateItem(randomType, spawnPos);
+        NetworkServer.Spawn(spawnedItem);
         //AddItem(spawnedItem);
     }
 
