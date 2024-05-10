@@ -34,7 +34,6 @@ public class PlayerMovement : NetworkBehaviour
         _playerScoreUI = FindObjectOfType<PlayerScore>();
         _globalScoreUI = FindObjectOfType<GlobalScore>();
         _dataBase = FindObjectOfType<Database>();
-        //_Name = DataBaseDataStore._Instance._Name;
     }
 
 
@@ -42,9 +41,12 @@ public class PlayerMovement : NetworkBehaviour
     {
         if (isLocalPlayer)
         {
-            _Name = PlayerName.GetLocalName();
-            _dataBase.Save(_Name, playerScore); // Insert the players initial data into the table
+            _Name = PlayerName.GetLocalName(); // Get the name you set at the beginning
+            _dataBase.Save(_Name, playerScore, out playerScore); // Insert the players initial data into the table. Get the score out from the database and store it in playerScore
+            _playerScoreUI.DisplayPlayerScore(playerScore); // Update player score 
+            CommandChangeScore(playerScore); // Update the global score
         }
+        
     }
 
     private void DisplayPlayerScore(int oldScore, int newPlayerScore)

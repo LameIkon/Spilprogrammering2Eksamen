@@ -4,17 +4,11 @@ using UnityEngine;
 using Mono.Data.Sqlite;
 using System.Data;
 using TMPro;
-using Mirror;
+using System;
 
 public class Database : MonoBehaviour 
 {
-    //[SerializeField] private TextMeshProUGUI _leaderboarText;
-
     private string _dataBase = "URI=file:database.db";
-    //private string _dataBase = "Assets/Database/database.db";
-
-    public string _Name;
-    public int _Score = 0;
 
     
     public static Database _Instance;
@@ -25,7 +19,7 @@ public class Database : MonoBehaviour
         {
             _Instance = this;
             transform.SetParent(null);      // We set the parent of the this the gameObject that has this component to be its own parent, this will ensure that it will not be destroyed prematurely.
-            DontDestroyOnLoad(gameObject);  // This will persist through scenes, but is not really needed in this instance but it is nice to have
+            DontDestroyOnLoad(gameObject);  // This will persist through scenes
 
         }
         else
@@ -40,14 +34,14 @@ public class Database : MonoBehaviour
     }
 
 
-
+    // Inititilize database
     public void InitDB() 
     {
         using (SqliteConnection sqlConnection = new SqliteConnection(_dataBase)) 
         {
             sqlConnection.Open(); // Open connection to the database
 
-            // Create table
+            // Create table if it does not exist
             using (SqliteCommand createCommand = sqlConnection.CreateCommand())
             {
                 createCommand.CommandText = "CREATE TABLE IF NOT EXISTS Leaderboard (playerName VARCHAR(30), score INT)";
@@ -58,33 +52,53 @@ public class Database : MonoBehaviour
         }
     }
 
-
-    public void Save(string name, int score)
+    // Called from player when getting instantiated
+    public void Save(string name, int score, out int savedScore) // Get playername, its current score, and a score to be returned to the player
     {
+        savedScore = 0;
+
         using (SqliteConnection sqlConnection = new SqliteConnection(_dataBase))
         {
             sqlConnection.Open(); // Open connection to the database
 
-            using (SqliteCommand insertCommand = sqlConnection.CreateCommand())
+            // Check if the name exist in the table
+            using (SqliteCommand selectCommand = sqlConnection.CreateCommand())
             {
-                // This inspiration from Marco can cause SQL injection -03 karakter til Marco. We need to make it different
-                //string text = "INSERT INTO leaderboard (playerName, score) VALUES ('{0}', '{1}')";
-                //insertCommand.CommandText = string.Format(text, _Name, _Score);
-                //insertCommand.ExecuteNonQuery();
+                // Checks all rows in the table for the searched name. Returns 1 if the name is matched and 0 if not
+                selectCommand.CommandText = "SELECT EXISTS (SELECT 1 FROM Leaderboard WHERE playerName = @PlayerName)"; 
+                selectCommand.Parameters.AddWithValue("@PlayerName", name);
+                bool exists = Convert.ToBoolean(selectCommand.ExecuteScalar()); // if 1 its true, if 0 its false
 
-                // Now this is what i consider a 12
-                insertCommand.CommandText = "INSERT INTO Leaderboard (playerName, score) VALUES (@PlayerName, @Score)";
-                insertCommand.Parameters.AddWithValue("@PlayerName", name);
-                insertCommand.Parameters.AddWithValue("@Score", score);
-                insertCommand.ExecuteNonQuery(); // Run the SQL code
+                // If the player already exist load that ones files and stop here
+                if (exists)
+                {
+                    savedScore = Load(name); // Retrieve that names files from database
+                }
+                else // Else create new playerdata
+                {
+                    using (SqliteCommand insertCommand = sqlConnection.CreateCommand())
+                    {
+                        // This inspiration from Marco can cause SQL injection -03 karakter til Marco. We need to make it different
+                        //string text = "INSERT INTO leaderboard (playerName, score) VALUES ('{0}', '{1}')";
+                        //insertCommand.CommandText = string.Format(text, _Name, _Score);
+                        //insertCommand.ExecuteNonQuery();
+
+                        // Now this is what i consider a 12
+                        insertCommand.CommandText = "INSERT INTO Leaderboard (playerName, score) VALUES (@PlayerName, @Score)";
+                        insertCommand.Parameters.AddWithValue("@PlayerName", name);
+                        insertCommand.Parameters.AddWithValue("@Score", score);
+                        insertCommand.ExecuteNonQuery(); // Run the SQL code
+                    }
+                }
             }
             sqlConnection.Close();
-
         }
     }
 
-    public void Load()
+    public int Load(string name) // Called when a players name is already stored in the database
     {
+        int score = 0; 
+
         using (SqliteConnection sqlConnection = new SqliteConnection(_dataBase))
         {
             sqlConnection.Open();
@@ -92,23 +106,23 @@ public class Database : MonoBehaviour
             using (SqliteCommand command = sqlConnection.CreateCommand())
             {
                 // Use the select command to find the player on the leaderboard
-                command.CommandText = "SELECT playerName, score FROM Leaderboard WHERE playerName = @PlayerName";
-                command.Parameters.AddWithValue("@PlayerName", _Name); // PlayerName from the scriptable object should be enough to find the wanted player
+                command.CommandText = "SELECT score FROM Leaderboard WHERE playerName = @PlayerName";
+                command.Parameters.AddWithValue("@PlayerName", name); // PlayerName used to find the currect data
 
                 using (IDataReader reader = command.ExecuteReader()) // Run the SELECT command 
                 {
-                    // Update the provided GameData object with the loaded data
-                    _Name = reader.GetString(0); // Get the first value = name
-                    _Score = reader.GetInt32(1); // Get the second value = score                     
-                }
-                sqlConnection.Close();
-
-                // We need to set the data back to the scriptable object....
+                    if (reader.Read())
+                    {
+                        score = reader.GetInt16(0); // Get the score 
+                    }
+                }             
             }
+            sqlConnection.Close();
         }
+        return score; // This score will then be returned back to the player script
     }
 
-    public void UpdateScore(string name, int score)
+    public void UpdateScore(string name, int score) // Called whenever the score gets updated (Coins collected)
     {
         using (SqliteConnection sqlConnection = new SqliteConnection(_dataBase))
         {
@@ -117,16 +131,43 @@ public class Database : MonoBehaviour
             using (SqliteCommand command = sqlConnection.CreateCommand())
             {
                 // Use the select command to find the player on the leaderboard
-                command.CommandText = "UPDATE Leaderboard SET score = @Score WHERE playerName = @PlayerName";
+                command.CommandText = "UPDATE Leaderboard SET score = @Score WHERE playerName = @PlayerName"; // Update that players files in the database 
                 command.Parameters.AddWithValue("@Score", score);
-                command.Parameters.AddWithValue("@PlayerName", name); // PlayerName from the scriptable object should be enough to find the wanted player
+                command.Parameters.AddWithValue("@PlayerName", name);  // PlayerName used to find the currect data
                 command.ExecuteNonQuery();
             }
             sqlConnection.Close();
         }
     }
 
-    public void DeleteSave(string fileName)
+    public void DeleteAllSaves() // Called by pressing button
+    {
+        using (SqliteConnection sqlConnection = new SqliteConnection(_dataBase))
+        {
+            sqlConnection.Open();
+
+            using (SqliteCommand command = sqlConnection.CreateCommand())
+            {
+                // Call the command to delete everything in the table
+                command.CommandText = "DELETE FROM Leaderboard"; // Remove all values
+                command.ExecuteNonQuery(); // Run SQL code
+            }
+            sqlConnection.Close();
+        }
+    }
+
+    #region unused code
+    /// <summary>
+    /// Below is the collection of unused code that with more time would perhaps been implemented
+    /// </summary>
+
+    //[SerializeField] private TextMeshProUGUI _leaderboarText;
+    //private string _dataBase = "Assets/Database/database.db";
+    //public string _Name;
+    //public int _Score = 0;
+
+
+    public void DeleteSave(string fileName) // Not being used. If project continued getting developed we would get this method to delete specific players and their scores
     {
         using (SqliteConnection sqlConnection = new SqliteConnection(_dataBase))
         {
@@ -143,23 +184,8 @@ public class Database : MonoBehaviour
         }
     }
 
-    public void DeleteAllSaves()
-    {
-        using (SqliteConnection sqlConnection = new SqliteConnection(_dataBase))
-        {
-            sqlConnection.Open();
 
-            using (SqliteCommand command = sqlConnection.CreateCommand())
-            {
-                // Call the command to drop the table
-                command.CommandText = "DELETE FROM Leaderboard"; // Remove all values
-                command.ExecuteNonQuery(); // Run SQL code
-            }
-            sqlConnection.Close();
-        }
-    }
-
-    public void ShowLeaderboard()
+    public void ShowLeaderboard() // Not being used. If project continued getting developed we would get this method to show all players score in the game
     {
         using (SqliteConnection sqlConnection = new SqliteConnection(_dataBase))
         {
@@ -187,4 +213,5 @@ public class Database : MonoBehaviour
             sqlConnection.Close();
         }
     }
+    #endregion
 }
