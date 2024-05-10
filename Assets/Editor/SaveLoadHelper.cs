@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
-[CustomEditor(typeof(SaveLoadScript))]
+[CustomEditor(typeof(SaveLoader))]
 public class SaveLoadHelper : Editor
 {
     public override void OnInspectorGUI()
     {
-        SaveLoadScript script = (SaveLoadScript)target;
+        SaveLoader script = (SaveLoader)target;
         string fileName = script._fileName;
 
         DrawDefaultInspector();

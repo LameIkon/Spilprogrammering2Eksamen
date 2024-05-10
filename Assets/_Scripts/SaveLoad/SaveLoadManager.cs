@@ -13,7 +13,7 @@ public class SaveLoadManager : NetworkBehaviour
 
     private void Awake() 
     {
-        _dataStore = new FileWriteDataStore(new JsonSerialize()); // we instanciate the _dataStorage as a type FileWriter with the JsonSerialize, we also need to do it here in the Awake method, as the persistantDataPath cannot be instanciatied outside of Awake() and Strat()
+        _dataStore = new FileWriteDataStore(new JsonSerializer()); // we instanciate the _dataStorage as a type FileWriter with the JsonSerialize, we also need to do it here in the Awake method, as the persistantDataPath cannot be instanciatied outside of Awake() and Strat()
     }
 
     #endregion

@@ -5,11 +5,11 @@ using UnityEngine;
 
 public class FileWriteDataStore : IDataStore
 {
-    private readonly ISerialize _serializer; // Making this as generic as possible we pass in a ISerialize, in this inplementation we will do it as a .json file, but we could make different inplementations if we wanted in the future.
+    private readonly ISerializer _serializer; // Making this as generic as possible we pass in a ISerialize, in this inplementation we will do it as a .json file, but we could make different inplementations if we wanted in the future.
     private readonly string _dataPath;  // We need a path to were the data will be saved
     private readonly string _fileExtension; // We need a file extension for the data we will store
     
-    public FileWriteDataStore(ISerialize serializer) // As all the fields are readonly they need to be assiged in a consturctor
+    public FileWriteDataStore(ISerializer serializer) // As all the fields are readonly they need to be assiged in a consturctor
     {
         _dataPath = Application.persistentDataPath; // the place we want to store the data, this will be in the AppData folder.
         _fileExtension = ".json"; // we are storing it as a .json file, but this could become more generic, then it would be assigned in the constructor

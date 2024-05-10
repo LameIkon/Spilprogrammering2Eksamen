@@ -4,7 +4,7 @@ using UnityEngine;
 using Mono.Data.Sqlite;
 using System.Data;
 
-public class SqlSerialize : ISerialize
+public class SqlSerialize : ISerializer
 {
     public string Serialize<T>(T obj)
     {

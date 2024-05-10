@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 
-public class SaveLoadScript : MonoBehaviour
+public class SaveLoader : MonoBehaviour
 {
 
 
@@ -12,19 +12,22 @@ public class SaveLoadScript : MonoBehaviour
     public string _fileName;
     private const string _fileExtention = ".json";
     public PlayerData _playerData;
+    private PlayerMovement _playerMovement;
 
-    ISerialize _serializer;
+    ISerializer _serializer;
 
     private void Awake() 
     {
         _dataPath = Application.dataPath;
         _fileName = "SaveLoadTest";
-        _serializer = new JsonSerialize();
+        _serializer = new JsonSerializer();
         _playerData = new PlayerData();
     }
 
     private void Start() 
     {
+        _playerMovement = GetComponent<PlayerMovement>();
+
         if (File.Exists(GetFilePath(_fileName)))
         {
             Load(_fileName);
@@ -34,12 +37,14 @@ public class SaveLoadScript : MonoBehaviour
             Save(_fileName);
         }
         
+        
     }
 
     private void Update() 
     {
         _playerData._position = transform.position;
         _playerData._rotation = transform.rotation;
+        _playerData._velocity = _playerMovement._rb.velocity;
     }
 
     private string GetFilePath(string fileName) 
@@ -62,6 +67,6 @@ public class SaveLoadScript : MonoBehaviour
 
         transform.position = _playerData._position;
         transform.rotation = _playerData._rotation;
-
+        _playerMovement._rb.velocity = _playerData._velocity;
     }
 }

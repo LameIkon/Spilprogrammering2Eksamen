@@ -8,7 +8,7 @@ public class PlayerMovement : NetworkBehaviour
 {
 
     public InputReader _inputReader;
-    private Rigidbody _rb;
+    public Rigidbody _rb;
 
     public int speed = 60;
     private Vector2 _direction;
@@ -79,5 +79,6 @@ public class PlayerMovement : NetworkBehaviour
             _rb.AddForce(new Vector3(speed * _inputReader.Move().x, 0, speed * _inputReader.Move().y));
         }
 
+        
     }
 }
