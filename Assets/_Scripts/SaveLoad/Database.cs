@@ -67,12 +67,12 @@ public class Database : MonoBehaviour
                 // Checks all rows in the table for the searched name. Returns 1 if the name is matched and 0 if not
                 selectCommand.CommandText = "SELECT EXISTS (SELECT 1 FROM Leaderboard WHERE playerName = @PlayerName)"; 
                 selectCommand.Parameters.AddWithValue("@PlayerName", name);
-                bool exists = Convert.ToBoolean(selectCommand.ExecuteScalar()); // if 1 its true, if 0 its false
+                bool exists = Convert.ToBoolean(selectCommand.ExecuteScalar()); // 1 its true, 0 its false
 
                 // If the player already exist load that ones files and stop here
                 if (exists)
                 {
-                    savedScore = Load(name); // Retrieve that names files from database
+                    savedScore = Load(name); // Retrieve that players score from database
                 }
                 else // Else create new playerdata
                 {

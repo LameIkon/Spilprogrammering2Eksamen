@@ -20,6 +20,7 @@ public class ItemFactory : NetworkBehaviour
         _itemType = _item._Type;
     }
 
+    [ServerCallback]
     public virtual void OnTriggerEnter(Collider collision)
     {
         if (collision.CompareTag("Player"))

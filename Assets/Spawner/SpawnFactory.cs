@@ -45,6 +45,7 @@ public class SpawnFactory : NetworkBehaviour
         Spawning();
     }
 
+    [ServerCallback]
     private void Spawning()
     {
         StartCoroutine(SpawningObjects(_spawnTimer));    
