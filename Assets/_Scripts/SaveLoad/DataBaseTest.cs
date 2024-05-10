@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class DataBaseTest : MonoBehaviour
 {
-    public DataBaseDataStore _database;
+    public Database _database;
     GameData _gameObject;
 
     // Start is called before the first frame update

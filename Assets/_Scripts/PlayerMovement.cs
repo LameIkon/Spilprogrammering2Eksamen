@@ -25,7 +25,7 @@ public class PlayerMovement : NetworkBehaviour
 
     //public SaveLoadManager _saveLoadManager;
     private GameData _gameData;
-    private DataBaseDataStore _dataBase;
+    private Database _dataBase;
 
     private void Awake()
     {
@@ -33,7 +33,7 @@ public class PlayerMovement : NetworkBehaviour
         _rb = GetComponent<Rigidbody>();
         _playerScoreUI = FindObjectOfType<PlayerScore>();
         _globalScoreUI = FindObjectOfType<GlobalScore>();
-        _dataBase = FindObjectOfType<DataBaseDataStore>();
+        _dataBase = FindObjectOfType<Database>();
         //_Name = DataBaseDataStore._Instance._Name;
     }
 

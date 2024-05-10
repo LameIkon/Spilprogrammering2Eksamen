@@ -18,15 +18,15 @@ public class SaveLoader : MonoBehaviour
 
     private void Awake() 
     {
+        _playerMovement = GetComponent<PlayerMovement>();
         _dataPath = Application.dataPath;
-        _fileName = "SaveLoadTest";
         _serializer = new JsonSerializer();
         _playerData = new PlayerData();
     }
 
     private void Start() 
     {
-        _playerMovement = GetComponent<PlayerMovement>();
+        _fileName = _playerMovement._Name;
 
         if (File.Exists(GetFilePath(_fileName)))
         {
@@ -36,8 +36,6 @@ public class SaveLoader : MonoBehaviour
         {
             Save(_fileName);
         }
-        
-        
     }
 
     private void Update() 
@@ -45,6 +43,7 @@ public class SaveLoader : MonoBehaviour
         _playerData._position = transform.position;
         _playerData._rotation = transform.rotation;
         _playerData._velocity = _playerMovement._rb.velocity;
+        Save(_fileName );
     }
 
     private string GetFilePath(string fileName) 
@@ -69,4 +68,10 @@ public class SaveLoader : MonoBehaviour
         transform.rotation = _playerData._rotation;
         _playerMovement._rb.velocity = _playerData._velocity;
     }
+
+    public void DeleteAllSaves()
+    {
+
+    }
+
 }
