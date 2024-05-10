@@ -22,9 +22,6 @@ public class SpawnFactory : NetworkBehaviour
     private Vector3 _randomSpawn;
     // private Coroutine _spawningObjects;
 
-    [SyncVar]
-    public List<GameObject> _objectList;
-
     public static SpawnFactory _Instance;
 
     private void Awake()
@@ -77,13 +74,6 @@ public class SpawnFactory : NetworkBehaviour
         ItemType randomType = (ItemType)UnityEngine.Random.Range(0, (float)Enum.GetValues(typeof(ItemType)).Cast<ItemType>().Max() +1);
         GameObject spawnedItem = CreateItem(randomType, spawnPos);
         NetworkServer.Spawn(spawnedItem);
-        //AddItem(spawnedItem);
-    }
-
-    [Command]
-    private void AddItem(GameObject item) 
-    {
-        _objectList.Add(item);
     }
 
     [Server]
