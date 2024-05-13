@@ -177,9 +177,9 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  _inputReader: {fileID: 0}
-  _rb: {fileID: 0}
-  speed: 10
+  _InputReader: {fileID: 0}
+  _Rb: {fileID: 0}
+  _Speed: 10
   playerScore: 0
   _Name: 
 --- !u!54 &1059714403879693868
@@ -223,9 +223,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _fileName: 
   _playerData:
-    _Name: 
-    _Id: 0
-    _Score: 0
-    _position: {x: 0, y: 0, z: 0}
-    _rotation: {x: 0, y: 0, z: 0, w: 0}
-    _velocity: {x: 0, y: 0, z: 0}
+    _Position: {x: 0, y: 0, z: 0}
+    _Rotation: {x: 0, y: 0, z: 0, w: 0}
+    _Velocity: {x: 0, y: 0, z: 0}

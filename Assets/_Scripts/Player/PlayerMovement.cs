@@ -7,10 +7,10 @@ using UnityEngine;
 public class PlayerMovement : NetworkBehaviour
 {
 
-    public InputReader _inputReader;
-    public Rigidbody _rb;
+    public InputReader _InputReader;
+    public Rigidbody _Rb;
 
-    public int speed = 60;
+    public int _Speed = 60;
     private Vector2 _direction;
 
     private PlayerScore _playerScoreUI;
@@ -26,8 +26,8 @@ public class PlayerMovement : NetworkBehaviour
 
     private void Awake()
     {
-        _inputReader = ScriptableObject.CreateInstance<InputReader>();
-        _rb = GetComponent<Rigidbody>();
+        _InputReader = ScriptableObject.CreateInstance<InputReader>();
+        _Rb = GetComponent<Rigidbody>();
         _playerScoreUI = FindObjectOfType<PlayerScore>();
         _globalScoreUI = FindObjectOfType<GlobalScore>();
         _dataBase = FindObjectOfType<Database>();
@@ -58,8 +58,8 @@ public class PlayerMovement : NetworkBehaviour
     [Command(requiresAuthority = false)]
     public void CommandSetPlayerScore(int change) 
     {
-            playerScore += change;
-            CommandChangeScore(change); 
+        playerScore += change;
+        CommandChangeScore(change); 
     }
 
     [Command(requiresAuthority = false)]
@@ -72,7 +72,7 @@ public class PlayerMovement : NetworkBehaviour
     {
         if (isLocalPlayer)
         {
-            _rb.AddForce(new Vector3(speed * _inputReader.Move().x, 0, speed * _inputReader.Move().y));
+            _Rb.AddForce(new Vector3(_Speed * _InputReader.Move().x, 0, _Speed * _InputReader.Move().y));
         }   
     }
 }

@@ -20,7 +20,7 @@ public class SaveLoader : MonoBehaviour
     private void Awake() 
     {
         _playerMovement = GetComponent<PlayerMovement>();
-        _dataPath = Application.dataPath;
+        _dataPath = Application.persistentDataPath;     // This will be saved in the Appdata Folder
         _serializer = new JsonSerializer();
         _playerData = new PlayerData();
     }
@@ -43,7 +43,7 @@ public class SaveLoader : MonoBehaviour
     {
         _playerData._Position = transform.position;
         _playerData._Rotation = transform.rotation;
-        _playerData._Velocity = _playerMovement._rb.velocity;
+        _playerData._Velocity = _playerMovement._Rb.velocity;
         Save(_fileName );
     }
 
@@ -67,7 +67,7 @@ public class SaveLoader : MonoBehaviour
 
         transform.position = _playerData._Position;
         transform.rotation = _playerData._Rotation;
-        _playerMovement._rb.velocity = _playerData._Velocity;
+        _playerMovement._Rb.velocity = _playerData._Velocity;
     }
 
 }
