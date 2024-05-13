@@ -5,10 +5,7 @@ using UnityEngine;
 [Serializable]
 public class PlayerData
 {
-    public string _Name;
-    public int _Id;
-    public int _Score;
-    public Vector3 _position;
-    public Quaternion _rotation;
-    public Vector3 _velocity;
+    public Vector3 _Position;
+    public Quaternion _Rotation;
+    public Vector3 _Velocity;
 }

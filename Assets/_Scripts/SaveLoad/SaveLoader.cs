@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
+using Mirror;
 
 public class SaveLoader : MonoBehaviour
 {
@@ -40,9 +41,9 @@ public class SaveLoader : MonoBehaviour
 
     private void Update() 
     {
-        _playerData._position = transform.position;
-        _playerData._rotation = transform.rotation;
-        _playerData._velocity = _playerMovement._rb.velocity;
+        _playerData._Position = transform.position;
+        _playerData._Rotation = transform.rotation;
+        _playerData._Velocity = _playerMovement._rb.velocity;
         Save(_fileName );
     }
 
@@ -64,14 +65,9 @@ public class SaveLoader : MonoBehaviour
 
         _playerData = _serializer.Deserialize<PlayerData>(File.ReadAllText(fileLocation)); // we pass the file to the serializer
 
-        transform.position = _playerData._position;
-        transform.rotation = _playerData._rotation;
-        _playerMovement._rb.velocity = _playerData._velocity;
-    }
-
-    public void DeleteAllSaves()
-    {
-
+        transform.position = _playerData._Position;
+        transform.rotation = _playerData._Rotation;
+        _playerMovement._rb.velocity = _playerData._Velocity;
     }
 
 }
