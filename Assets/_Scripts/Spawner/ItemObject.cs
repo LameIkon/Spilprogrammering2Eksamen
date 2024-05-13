@@ -11,6 +11,8 @@ public class ItemObject : ScriptableObject
     public ItemType _Type;
 }
 
+
+//what type of items are there? Is used for when we spawn the items.
 public enum ItemType
 {
     Coin,

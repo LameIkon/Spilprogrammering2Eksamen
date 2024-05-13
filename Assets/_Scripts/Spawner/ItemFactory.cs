@@ -15,6 +15,7 @@ public class ItemFactory : NetworkBehaviour
 
     private void Awake()
     {
+        // Here we load the properties from the scriptable ItemObject "on to" the prefabObject.
         _value = _item._Value;
         _name = _item._Name;
         _itemType = _item._Type;
@@ -25,9 +26,8 @@ public class ItemFactory : NetworkBehaviour
     {
         if (collision.CompareTag("Player"))
         {
-            collision.GetComponent<PlayerMovement>().CommandSetPlayerScore(_value);
-            //Setup for value on item being applied to a score
-            SpawnFactory._objectsSpawned--;
+            collision.GetComponent<PlayerMovement>().CommandSetPlayerScore(_value); //apllies the value on the object to the score.
+            SpawnFactory._objectsSpawned--; //Deincriment how many objects are in the game.
             Destroy(gameObject);
         }
     }
